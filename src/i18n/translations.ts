@@ -12,7 +12,7 @@ export const translations = {
     hero: {
       eyebrow: 'Prescripción del Movimiento & Longevidad',
       title1: 'Tu cuerpo no necesita más esfuerzo.',
-      title2: 'Necesita un plan hecho para vos.',
+      title2: 'Necesita un plan hecho para ti.',
       lead: 'Entrenamiento personalizado 100% online, diseñado por un profesional con 31 años de trayectoria — sin rutinas genéricas, sin lesionarte, sin perder tiempo.',
       cta: 'Quiero mi plan personalizado',
       viewPlans: 'Ver planes y precios',

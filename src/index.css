@@ -64,3 +64,18 @@ h1,h2,h3,.font-display{ font-family:'Barlow Condensed', ui-sans-serif, sans-seri
 }
 
 .text-balance{ text-wrap: balance; }
+
+.hero-gradient-text{
+  background:linear-gradient(180deg, #FFFFFF 0%, var(--accent-light) 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+@keyframes hero-bounce{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(8px); }
+}
+.hero-scroll-indicator{
+  animation: hero-bounce 2s ease-in-out infinite;
+}
