@@ -71,6 +71,7 @@ const testimonials = [
 
 const LEN = testimonials.length;
 const cards = [...testimonials, ...testimonials, ...testimonials];
+const DRAG_THRESHOLD = 50;
 
 function getCardWidth(track: HTMLDivElement): number {
   const firstCard = track.querySelector('.test-card') as HTMLElement | null;
@@ -85,11 +86,22 @@ function getGap(track: HTMLDivElement): number {
   return nextRect.left - cardRect.right;
 }
 
+function getIsMobile(): boolean {
+  return window.innerWidth < 768;
+}
+
 export default function Testimonials() {
   const root = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(LEN);
   const { t } = useLanguage();
+
+  const dragRef = useRef({
+    isDragging: false,
+    startX: 0,
+    currentX: 0,
+    startTrackX: 0,
+  });
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -101,14 +113,19 @@ export default function Testimonials() {
     return () => ctx.revert();
   }, []);
 
-  const animateTo = useCallback((index: number) => {
+  const animateTo = useCallback((index: number, animated = true) => {
     if (!track.current) return;
     const cardW = getCardWidth(track.current);
     const gap = getGap(track.current);
     const containerW = track.current.parentElement!.offsetWidth;
     const centerOffset = (containerW - cardW) / 2;
     const x = centerOffset - index * (cardW + gap);
-    gsap.to(track.current, { x, duration: 0.5, ease: 'power2.out' });
+
+    if (animated) {
+      gsap.to(track.current, { x, duration: 0.5, ease: 'power2.out' });
+    } else {
+      gsap.set(track.current, { x });
+    }
 
     const allCards = track.current.querySelectorAll('.test-card');
     allCards.forEach((card, i) => {
@@ -118,7 +135,7 @@ export default function Testimonials() {
         scale: isFocused ? 1.05 : 0.92,
         opacity: isFocused ? 1 : dist === 1 ? 0.5 : 0.25,
         filter: isFocused ? 'blur(0px)' : `blur(${Math.min(dist * 2, 6)}px)`,
-        duration: 0.45,
+        duration: animated ? 0.45 : 0,
         ease: 'power2.out',
       });
     });
@@ -140,6 +157,52 @@ export default function Testimonials() {
       }
       return next;
     });
+  };
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (!getIsMobile()) return;
+    const d = dragRef.current;
+    d.isDragging = true;
+    d.startX = e.clientX;
+    d.startTrackX = track.current ? ((track.current as unknown as { _gsap: { x: number } })._gsap?.x ?? 0) : 0;
+
+    const trackEl = track.current;
+    if (trackEl) {
+      gsap.killTweensOf(trackEl);
+      trackEl.style.cursor = 'grabbing';
+      trackEl.style.touchAction = 'pan-y';
+    }
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    const d = dragRef.current;
+    if (!d.isDragging || !track.current) return;
+
+    const deltaX = e.clientX - d.startX;
+    d.currentX = e.clientX;
+    gsap.set(track.current, { x: d.startTrackX + deltaX });
+  };
+
+  const handlePointerUp = () => {
+    const d = dragRef.current;
+    if (!d.isDragging || !track.current) return;
+    d.isDragging = false;
+
+    track.current.style.cursor = '';
+    track.current.style.touchAction = '';
+
+    const deltaX = d.currentX - d.startX;
+    const absDelta = Math.abs(deltaX);
+
+    if (absDelta > DRAG_THRESHOLD) {
+      if (deltaX < 0) {
+        scroll('right');
+      } else {
+        scroll('left');
+      }
+    } else {
+      animateTo(active);
+    }
   };
 
   return (
@@ -164,16 +227,25 @@ export default function Testimonials() {
         </div>
       </div>
       <div className="overflow-hidden">
-        <div ref={track} className="flex">
+        <div
+          ref={track}
+          className="flex"
+          style={{ touchAction: 'pan-y', cursor: 'grab' }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={handlePointerUp}
+        >
           {cards.map((item, i) => (
             <div
               key={i}
-              className="test-card shrink-0 w-[min(480px,85vw)] bg-[var(--surface-2)] rounded-2xl overflow-hidden card-grain flex"
+              className="test-card shrink-0 w-[min(480px,85vw)] bg-[var(--surface-2)] rounded-2xl overflow-hidden card-grain flex select-none"
             >
               <img
                 src={item.img}
                 alt={item.name}
-                className="w-[120px] h-[120px] md:w-[180px] md:h-[180px] object-cover shrink-0 self-center rounded-xl m-4 md:m-5"
+                className="w-[120px] h-[120px] md:w-[180px] md:h-[180px] object-cover shrink-0 self-center rounded-xl m-4 md:m-5 pointer-events-none"
+                draggable={false}
               />
               <div className="py-5 pr-5 md:py-7 md:pr-7 pl-2 flex flex-col">
                 <Quote size={18} className="text-[var(--accent)]/50 mb-2 md:mb-3" />

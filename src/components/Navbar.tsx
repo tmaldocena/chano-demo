@@ -118,7 +118,7 @@ export default function Navbar() {
 
       {mobileOpen && (
         <>
-          <div ref={overlayRef} className="fixed inset-0 bg-black/60 z-40" onClick={closeMobile} />
+          <div ref={overlayRef} className="fixed inset-0 bg-black/85 z-40" onClick={closeMobile} />
           <div ref={drawerRef} className="fixed top-0 right-0 bottom-0 w-[280px] bg-[var(--bg)] border-l border-white/10 z-50 flex flex-col px-6 pt-[env(safe-area-inset-top)]">
             <div className="flex items-center justify-between py-4 border-b border-white/10 mb-4">
               <img src="/chano-logo.png" alt="Chano" className="h-7" />
