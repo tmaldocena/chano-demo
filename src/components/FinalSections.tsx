@@ -44,7 +44,7 @@ export function FinalCTA() {
   }, []);
 
   return (
-    <section ref={root} className="relative text-center py-24 px-6 border-t border-white/[0.07] overflow-hidden">
+    <section ref={root} className="relative text-center py-16 md:py-24 px-6 border-t border-white/[0.07] overflow-hidden">
       <div className="absolute inset-0">
         <video ref={videoRef} autoPlay loop muted playsInline className="absolute inset-0 w-full h-[120%] object-cover -top-[10%]" src="/footer-video.mp4" />
         <div className="absolute inset-0 bg-[var(--bg)]/75" />
@@ -67,7 +67,7 @@ export function FinalCTA() {
             </span>
           </button>
         </div>
-        <div className="final-cta-item mt-20 pt-8 border-t border-white/20">
+        <div className="final-cta-item mt-12 md:mt-20 pt-8 border-t border-white/20">
           <img src="/chano-logo.png" alt="Chano" className="h-8 mx-auto mb-4" />
           <div className="flex items-center justify-center gap-5 mb-4">
             <a href="https://instagram.com/chanoentrenador" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-white/45 hover:text-white transition-colors">
@@ -130,6 +130,7 @@ export function WhatsAppFloat() {
       onClick={() => openWhatsApp()}
       aria-label="WhatsApp"
       className="fixed bottom-6 right-6 z-[60] w-14 h-14 rounded-full bg-[#25D366] flex items-center justify-center shadow-lg"
+      style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}
     >
       <MessageCircle size={26} className="text-white" fill="white" strokeWidth={0} />
     </button>

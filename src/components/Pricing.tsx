@@ -31,12 +31,12 @@ export default function Pricing() {
   }, []);
 
   return (
-    <section id="planes" ref={root} className="py-28 px-6 border-t border-white/[0.07]">
+    <section id="planes" ref={root} className="py-16 md:py-28 px-6 border-t border-white/[0.07]">
       <div className="max-w-[1280px] mx-auto">
         <h2 className="font-display font-bold text-center text-[clamp(26px,4vw,38px)] mb-3">
           {t('pricing.heading')}
         </h2>
-        <p className="text-center text-white/50 mb-16">{t('pricing.subheading')}</p>
+        <p className="text-center text-white/50 mb-10 md:mb-16">{t('pricing.subheading')}</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           {plans.map((p, i) => {
             const featured = i === 1;
@@ -45,9 +45,9 @@ export default function Pricing() {
                 key={p.name}
                 onMouseEnter={featured ? undefined : onEnter}
                 onMouseLeave={featured ? undefined : onLeave}
-                className={`price-card rounded-[20px] p-8 ${
+                className={`price-card rounded-[20px] p-6 md:p-8 ${
                   featured
-                    ? 'bg-[var(--accent)] scale-[1.04] shadow-[0_20px_60px_-20px_rgba(59,110,165,0.5)] relative'
+                    ? 'bg-[var(--accent)] md:scale-[1.04] shadow-[0_20px_60px_-20px_rgba(59,110,165,0.5)] relative'
                     : 'bg-[var(--surface-2)] border border-white/[0.07] cursor-pointer'
                 }`}
               >
@@ -57,7 +57,7 @@ export default function Pricing() {
                   </div>
                 )}
                 <div className={`text-base font-semibold mb-1 ${featured ? 'text-white' : 'text-white'}`}>{p.name}</div>
-                <div className={`font-mono-num text-[38px] font-bold mb-1 ${featured ? 'text-white' : 'text-white'}`}>{p.price}</div>
+                <div className={`font-mono-num text-[clamp(28px,5vw,38px)] font-bold mb-1 ${featured ? 'text-white' : 'text-white'}`}>{p.price}</div>
                 <div className={`text-xs mb-6 ${featured ? 'text-white/70' : 'text-white/40'}`}>{t('pricing.oneTime')}</div>
                 <ul className="flex flex-col gap-3 mb-8">
                   {p.features.map((f) => (

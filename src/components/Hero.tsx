@@ -81,7 +81,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section ref={root} className="relative min-h-[88vh] flex items-center overflow-hidden pt-32 pb-20 px-6">
+    <section ref={root} className="relative min-h-[88vh] flex items-center overflow-hidden pt-24 md:pt-32 pb-12 md:pb-20 px-6">
       <div className="absolute inset-0">
         <video
           ref={videoRef}
@@ -108,7 +108,7 @@ export default function Hero() {
           <p className="hero-lead text-white/60 text-lg leading-relaxed max-w-md mb-9">
             {t('hero.lead')}
           </p>
-          <div className="hero-cta flex flex-wrap items-center gap-6 mb-16">
+          <div className="hero-cta flex flex-wrap items-center gap-6 mb-10 md:mb-16">
             <a
               href="#planes"
               className="btn-magnetic inline-flex items-center gap-3 bg-[var(--accent)] hover:bg-[var(--accent-light)] text-white text-base font-semibold pl-7 pr-2 py-2 rounded-full"
@@ -122,7 +122,7 @@ export default function Hero() {
               {t('hero.viewPlans')}
             </a>
           </div>
-          <div className="flex gap-10 flex-wrap">
+          <div className="flex gap-6 md:gap-10 flex-wrap">
             {stats.map((s, i) => (
               <div key={s.label} ref={(el) => { statRefs.current[i] = el; }} className="hero-stat">
                 <div className="font-mono-num text-3xl font-bold text-[var(--accent-light)] stat-num">{s.num}</div>

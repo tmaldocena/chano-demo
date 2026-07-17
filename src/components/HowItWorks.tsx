@@ -29,12 +29,12 @@ export default function HowItWorks() {
   }, []);
 
   return (
-    <section ref={root} className="bg-[var(--surface-2)] py-28 px-6">
+    <section ref={root} className="bg-[var(--surface-2)] py-16 md:py-28 px-6">
       <div className="max-w-[1280px] mx-auto">
-        <h2 className="font-display font-bold text-center text-[clamp(26px,4vw,38px)] mb-20">
+        <h2 className="font-display font-bold text-center text-[clamp(26px,4vw,38px)] mb-12 md:mb-20">
           {t('howItWorks.heading')}
         </h2>
-        <div className="relative grid grid-cols-1 md:grid-cols-3 gap-14">
+        <div className="relative grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-14">
           <div ref={lineRef} className="hidden md:block absolute top-6 left-[16.6%] right-[16.6%] h-px bg-[var(--accent)]/30" />
           {steps.map((s, i) => (
             <div key={i} className="step-item flex flex-col items-center text-center relative z-10">

@@ -37,7 +37,7 @@ export default function ForWho() {
   }, []);
 
   return (
-    <section ref={root} className="relative bg-[var(--surface-2)] py-24 px-6 overflow-hidden">
+    <section ref={root} className="relative bg-[var(--surface-2)] py-16 md:py-24 px-6 overflow-hidden">
       <div className="absolute inset-0">
         <video ref={videoRef} autoPlay loop muted playsInline className="absolute inset-0 w-full h-[120%] object-cover -top-[10%]" src="/workout.mp4" />
         <div className="absolute inset-0 bg-[var(--bg)]/80" />

@@ -40,7 +40,7 @@ export default function Credentials() {
   }, []);
 
   return (
-    <section id="metodo" ref={root} className="border-y border-white/[0.07] py-24 px-6">
+    <section id="metodo" ref={root} className="border-y border-white/[0.07] py-16 md:py-24 px-6">
       <div className="max-w-[1280px] mx-auto">
         <h2 className="font-display font-bold text-center text-[clamp(26px,4vw,38px)] mb-14">
           {t('credentials.heading')}

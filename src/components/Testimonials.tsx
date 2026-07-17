@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Quote, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -71,8 +71,19 @@ const testimonials = [
 
 const LEN = testimonials.length;
 const cards = [...testimonials, ...testimonials, ...testimonials];
-const CARD_W = 480;
-const GAP = 24;
+
+function getCardWidth(track: HTMLDivElement): number {
+  const firstCard = track.querySelector('.test-card') as HTMLElement | null;
+  return firstCard ? firstCard.offsetWidth : 480;
+}
+
+function getGap(track: HTMLDivElement): number {
+  const firstCard = track.querySelector('.test-card') as HTMLElement | null;
+  if (!firstCard || !firstCard.nextElementSibling) return 16;
+  const cardRect = firstCard.getBoundingClientRect();
+  const nextRect = firstCard.nextElementSibling.getBoundingClientRect();
+  return nextRect.left - cardRect.right;
+}
 
 export default function Testimonials() {
   const root = useRef<HTMLDivElement>(null);
@@ -90,16 +101,18 @@ export default function Testimonials() {
     return () => ctx.revert();
   }, []);
 
-  useEffect(() => {
+  const animateTo = useCallback((index: number) => {
     if (!track.current) return;
+    const cardW = getCardWidth(track.current);
+    const gap = getGap(track.current);
     const containerW = track.current.parentElement!.offsetWidth;
-    const centerOffset = (containerW - CARD_W) / 2;
-    const x = centerOffset - active * (CARD_W + GAP);
+    const centerOffset = (containerW - cardW) / 2;
+    const x = centerOffset - index * (cardW + gap);
     gsap.to(track.current, { x, duration: 0.5, ease: 'power2.out' });
 
     const allCards = track.current.querySelectorAll('.test-card');
     allCards.forEach((card, i) => {
-      const dist = Math.abs(i - active);
+      const dist = Math.abs(i - index);
       const isFocused = dist === 0;
       gsap.to(card, {
         scale: isFocused ? 1.05 : 0.92,
@@ -109,17 +122,20 @@ export default function Testimonials() {
         ease: 'power2.out',
       });
     });
-  }, [active]);
+  }, []);
+
+  useEffect(() => {
+    animateTo(active);
+  }, [active, animateTo]);
 
   const scroll = (dir: 'left' | 'right') => {
     setActive((prev) => {
       const next = dir === 'right' ? prev + 1 : prev - 1;
-      if (next >= LEN * 2) {
-        gsap.set(track.current!, { x: (track.current!.parentElement!.offsetWidth - CARD_W) / 2 - LEN * (CARD_W + GAP) });
-        return LEN;
-      }
-      if (next < LEN) {
-        gsap.set(track.current!, { x: (track.current!.parentElement!.offsetWidth - CARD_W) / 2 - LEN * (CARD_W + GAP) });
+      if (next >= LEN * 2 || next < LEN) {
+        const cardW = track.current ? getCardWidth(track.current) : 480;
+        const gap = track.current ? getGap(track.current) : 16;
+        const containerW = track.current!.parentElement!.offsetWidth;
+        gsap.set(track.current!, { x: (containerW - cardW) / 2 - LEN * (cardW + gap) });
         return LEN;
       }
       return next;
@@ -127,41 +143,41 @@ export default function Testimonials() {
   };
 
   return (
-    <section id="testimonios" ref={root} className="py-28 overflow-hidden">
-      <div className="max-w-[1280px] mx-auto px-6 mb-14 flex items-center justify-between">
-        <h2 className="font-display font-bold text-[clamp(26px,4vw,38px)]">
+    <section id="testimonios" ref={root} className="py-16 md:py-28 overflow-hidden">
+      <div className="max-w-[1280px] mx-auto px-6 mb-10 md:mb-14 flex items-center justify-between">
+        <h2 className="font-display font-bold text-[clamp(22px,4vw,38px)]">
           {t('testimonials.heading')}
         </h2>
-        <div className="flex gap-3">
+        <div className="flex gap-2 md:gap-3">
           <button
             onClick={() => scroll('left')}
-            className="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center text-white/60 hover:text-white hover:border-white/30 transition-colors"
+            className="w-9 h-9 md:w-10 md:h-10 rounded-full border border-white/15 flex items-center justify-center text-white/60 hover:text-white hover:border-white/30 transition-colors"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={18} />
           </button>
           <button
             onClick={() => scroll('right')}
-            className="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center text-white/60 hover:text-white hover:border-white/30 transition-colors"
+            className="w-9 h-9 md:w-10 md:h-10 rounded-full border border-white/15 flex items-center justify-center text-white/60 hover:text-white hover:border-white/30 transition-colors"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={18} />
           </button>
         </div>
       </div>
       <div className="overflow-hidden">
-        <div ref={track} className="flex" style={{ gap: `${GAP}px` }}>
+        <div ref={track} className="flex">
           {cards.map((item, i) => (
             <div
               key={i}
-              className="test-card shrink-0 w-[480px] bg-[var(--surface-2)] rounded-2xl overflow-hidden card-grain flex"
+              className="test-card shrink-0 w-[min(480px,85vw)] bg-[var(--surface-2)] rounded-2xl overflow-hidden card-grain flex"
             >
               <img
                 src={item.img}
                 alt={item.name}
-                className="w-[180px] h-[180px] object-cover shrink-0 self-center rounded-xl m-5"
+                className="w-[120px] h-[120px] md:w-[180px] md:h-[180px] object-cover shrink-0 self-center rounded-xl m-4 md:m-5"
               />
-              <div className="py-7 pr-7 pl-2 flex flex-col">
-                <Quote size={20} className="text-[var(--accent)]/50 mb-3" />
-                <p className="text-white/70 text-[14px] leading-relaxed italic mb-5 flex-grow">
+              <div className="py-5 pr-5 md:py-7 md:pr-7 pl-2 flex flex-col">
+                <Quote size={18} className="text-[var(--accent)]/50 mb-2 md:mb-3" />
+                <p className="text-white/70 text-[13px] md:text-[14px] leading-relaxed italic mb-4 md:mb-5 flex-grow">
                   "{item.text}"
                 </p>
                 <div>
