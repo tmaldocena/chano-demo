@@ -5,7 +5,7 @@ interface LanguageContextValue {
   locale: Locale;
   setLocale: (l: Locale) => void;
   t: (key: TranslationKey) => string;
-  tv: (key: TranslationKey) => unknown;
+  tv: (key: string) => unknown;
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -44,7 +44,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   );
 
   const tv = useCallback(
-    (key: TranslationKey): unknown => {
+    (key: string): unknown => {
       return getNestedValue(translations[locale] as Record<string, unknown>, key);
     },
     [locale],

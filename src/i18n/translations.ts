@@ -233,8 +233,4 @@ export const translations = {
   },
 } as const;
 
-type NestedKeyOf<T> = {
-  [K in keyof T]: T[K] extends object ? `${K & string}.${NestedKeyOf<T[K]> & string}` : K & string;
-}[keyof T];
-
-export type TranslationKey = NestedKeyOf<(typeof translations)['es']>;
+export type TranslationKey = string;
