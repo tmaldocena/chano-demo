@@ -78,12 +78,10 @@ function getCardWidth(track: HTMLDivElement): number {
   return firstCard ? firstCard.offsetWidth : 480;
 }
 
-function getGap(track: HTMLDivElement): number {
-  const firstCard = track.querySelector('.test-card') as HTMLElement | null;
-  if (!firstCard || !firstCard.nextElementSibling) return 16;
-  const cardRect = firstCard.getBoundingClientRect();
-  const nextRect = firstCard.nextElementSibling.getBoundingClientRect();
-  return nextRect.left - cardRect.right;
+function getStep(track: HTMLDivElement): number {
+  const cards = track.querySelectorAll('.test-card');
+  if (cards.length < 2) return 480;
+  return (cards[1] as HTMLElement).offsetLeft - (cards[0] as HTMLElement).offsetLeft;
 }
 
 function getIsMobile(): boolean {
@@ -115,11 +113,11 @@ export default function Testimonials() {
 
   const animateTo = useCallback((index: number, animated = true) => {
     if (!track.current) return;
+    const step = getStep(track.current);
     const cardW = getCardWidth(track.current);
-    const gap = getGap(track.current);
     const containerW = track.current.parentElement!.offsetWidth;
     const centerOffset = (containerW - cardW) / 2;
-    const x = centerOffset - index * (cardW + gap);
+    const x = centerOffset - index * step;
 
     if (animated) {
       gsap.to(track.current, { x, duration: 0.5, ease: 'power2.out' });
@@ -149,10 +147,10 @@ export default function Testimonials() {
     setActive((prev) => {
       const next = dir === 'right' ? prev + 1 : prev - 1;
       if (next >= LEN * 2 || next < LEN) {
+        const step = track.current ? getStep(track.current) : 480;
         const cardW = track.current ? getCardWidth(track.current) : 480;
-        const gap = track.current ? getGap(track.current) : 16;
         const containerW = track.current!.parentElement!.offsetWidth;
-        gsap.set(track.current!, { x: (containerW - cardW) / 2 - LEN * (cardW + gap) });
+        gsap.set(track.current!, { x: (containerW - cardW) / 2 - LEN * step });
         return LEN;
       }
       return next;
